@@ -26,6 +26,7 @@ namespace AssetStudio
             m_Mesh = new PPtr<Mesh>(reader);
 
             var numBones = reader.ReadInt32();
+
             m_Bones = new List<PPtr<Transform>>();
             for (int b = 0; b < numBones; b++)
             {

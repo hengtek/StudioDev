@@ -55,7 +55,10 @@ namespace AssetStudio
                     if (reader.Game.Type.IsBH3Group())
                     {
                         var m_AllowHalfResolution = reader.ReadByte();
-                        int m_EnableGpuQuery = isNewHeader ? reader.ReadByte() : 0;
+                        if (!reader.Game.Type.IsBH3Pre())
+                        {
+                            int m_EnableGpuQuery = isNewHeader ? reader.ReadByte() : 0;
+                        }
                     }
                     if (reader.Game.Type.IsGIGroup())
                     {
@@ -158,7 +161,10 @@ namespace AssetStudio
                 {
                     var m_RendererPriority = reader.ReadInt32();
                 }
+                if (reader.Game.Type.IsBH3Pre())
+                {
 
+                }
                 var m_LightmapIndex = reader.ReadUInt16();
                 var m_LightmapIndexDynamic = reader.ReadUInt16();
                 if (reader.Game.Type.IsGIGroup() && (m_LightmapIndex != 0xFFFF || m_LightmapIndexDynamic != 0xFFFF))
@@ -259,7 +265,7 @@ namespace AssetStudio
 
                 }
                 reader.AlignStream();
-                if (reader.Game.Type.IsGIGroup() || reader.Game.Type.IsBH3())
+                if (reader.Game.Type.IsGIGroup() || reader.Game.Type.IsBH3()||reader.Game.Type.IsBH3Pre())
                 {
                     var m_UseHighestMip = reader.ReadBoolean();
                     reader.AlignStream();
