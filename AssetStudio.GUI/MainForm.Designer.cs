@@ -871,14 +871,14 @@ namespace AssetStudio.GUI
             // 
             buildBothParallelToolStripMenuItem.Name = "buildBothToolStripMenuItem";
             buildBothParallelToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
-            buildBothParallelToolStripMenuItem.Text = "test1";
+            buildBothParallelToolStripMenuItem.Text = "Build Both Parallel ";
             buildBothParallelToolStripMenuItem.Click += buildBothParallelToolStripMenuItem_Click;
             // 
             // buildBothToolStripMenuItem
             // 
             buildBothParallelTestToolStripMenuItem.Name = "buildBothToolStripMenuItem";
             buildBothParallelTestToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
-            buildBothParallelTestToolStripMenuItem.Text = "test2";
+            buildBothParallelTestToolStripMenuItem.Text = "Build Both Parallel (test)";
             buildBothParallelTestToolStripMenuItem.Click += buildBothParallelTestToolStripMenuItem_Click;
             // 
             // clearMapToolStripMenuItem

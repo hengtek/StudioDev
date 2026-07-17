@@ -359,6 +359,7 @@ namespace AssetStudio.GUI
             var objectAssetItemDic = new Dictionary<Object, AssetItem>(objectCount);
             var mihoyoBinDataNames = new List<(PPtr<Object>, string)>();
             var containers = new List<(PPtr<Object>, string)>();
+            var tex2dArrayAssetList = new List<AssetItem>();
             Progress.Reset();
             foreach (var assetsFile in assetsManager.assetsFileList)
             {
@@ -379,6 +380,13 @@ namespace AssetStudio.GUI
                             if (!string.IsNullOrEmpty(m_Texture2D.m_StreamData?.path))
                                 assetItem.FullSize = asset.byteSize + m_Texture2D.m_StreamData.size;
                             exportable = ClassIDType.Texture2D.CanExport();
+                            break;
+                        case Texture2DArray m_Texture2DArray:
+                            if (!string.IsNullOrEmpty(m_Texture2DArray.m_StreamData?.path))
+                                assetItem.FullSize = asset.byteSize + m_Texture2DArray.m_StreamData.size;
+                            assetItem.Text = m_Texture2DArray.m_Name;
+                            tex2dArrayAssetList.Add(assetItem);
+                            exportable = true;
                             break;
                         case AudioClip m_AudioClip:
                             if (!string.IsNullOrEmpty(m_AudioClip.m_Source))
@@ -488,6 +496,22 @@ namespace AssetStudio.GUI
                 if (Game.Type.IsGISubGroup())
                 {
                     UpdateContainers();
+                }
+            }
+            foreach (var tex2dAssetItem in tex2dArrayAssetList)
+            {
+                var m_Texture2DArray = (Texture2DArray)tex2dAssetItem.Asset;
+                for (var layer = 0; layer < m_Texture2DArray.m_Depth; layer++)
+                {
+                    var fakeObj = new Texture2D(m_Texture2DArray, layer);
+                    m_Texture2DArray.TextureList.Add(fakeObj);
+
+                    var fakeItem = new AssetItem(fakeObj)
+                    {
+                        Text = fakeObj.m_Name,
+                        Container = tex2dAssetItem.Container
+                    };
+                    exportableAssets.Add(fakeItem);
                 }
             }
             foreach (var tmp in exportableAssets)

@@ -599,6 +599,7 @@ namespace AssetStudio
                             case ClassIDType.VideoClip when ClassIDType.VideoClip.CanExport():
                             case ClassIDType.AudioClip when ClassIDType.AudioClip.CanExport():
                             case ClassIDType.AnimationClip when ClassIDType.AnimationClip.CanExport():
+                            case ClassIDType.Texture2DArray when ClassIDType.Texture2DArray.CanExport():
                                 asset.Name = objectReader.ReadAlignedString();
                                 exportable = true;
                                 break;

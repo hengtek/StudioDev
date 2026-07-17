@@ -231,11 +231,12 @@ namespace AssetStudio.CLI
             var objectAssetItemDic = new Dictionary<Object, AssetItem>();
             var mihoyoBinDataNames = new List<(PPtr<Object>, string)>();
             var containers = new List<(PPtr<Object>, string)>();
+            var tex2dArrayAssetList = new List<AssetItem>();
             foreach (var assetsFile in assetsManager.assetsFileList)
             {
                 foreach (var asset in assetsFile.Objects)
                 {
-                    ProcessAssetData(asset, objectAssetItemDic, mihoyoBinDataNames, containers, ref i);
+                    ProcessAssetData(asset, objectAssetItemDic, mihoyoBinDataNames, containers, tex2dArrayAssetList,ref i);
                 }
             }
             foreach ((var pptr, var name) in mihoyoBinDataNames)
@@ -266,6 +267,15 @@ namespace AssetStudio.CLI
                     UpdateContainers();
                 }
             }
+            foreach (var tex2dAssetItem in tex2dArrayAssetList)
+            {
+                var m_Texture2DArray = (Texture2DArray)tex2dAssetItem.Asset;
+                for (var layer = 0; layer < m_Texture2DArray.m_Depth; layer++)
+                {
+                    var fakeObj = new Texture2D(m_Texture2DArray, layer);
+                    m_Texture2DArray.TextureList.Add(fakeObj);
+                }
+            }
 
             var matches = exportableAssets.Where(x =>
             {
@@ -276,9 +286,10 @@ namespace AssetStudio.CLI
             }).ToArray();
             exportableAssets.Clear();
             exportableAssets.AddRange(matches);
+            tex2dArrayAssetList.Clear();
         }
 
-        public static void ProcessAssetData(Object asset, Dictionary<Object, AssetItem> objectAssetItemDic, List<(PPtr<Object>, string)> mihoyoBinDataNames, List<(PPtr<Object>, string)> containers, ref int i)
+        public static void ProcessAssetData(Object asset, Dictionary<Object, AssetItem> objectAssetItemDic, List<(PPtr<Object>, string)> mihoyoBinDataNames, List<(PPtr<Object>, string)> containers, List<AssetItem> tex2dArrayAssetList,ref int i)
         {
             var assetItem = new AssetItem(asset);
             objectAssetItemDic.Add(asset, assetItem);
@@ -293,6 +304,12 @@ namespace AssetStudio.CLI
                     if (!string.IsNullOrEmpty(m_Texture2D.m_StreamData?.path))
                         assetItem.FullSize = asset.byteSize + m_Texture2D.m_StreamData.size;
                     exportable = ClassIDType.Texture2D.CanExport();
+                    break;
+                case Texture2DArray m_Texture2DArray:
+                    if (!string.IsNullOrEmpty(m_Texture2DArray.m_StreamData?.path))
+                        assetItem.FullSize = asset.byteSize + m_Texture2DArray.m_StreamData.size;
+                    assetItem.Text = m_Texture2DArray.m_Name;
+                    tex2dArrayAssetList.Add(assetItem);
                     break;
                 case AudioClip m_AudioClip:
                     if (!string.IsNullOrEmpty(m_AudioClip.m_Source))

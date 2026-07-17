@@ -41,6 +41,24 @@ namespace AssetStudio.GUI
             }
         }
 
+        public static bool ExportTexture2DArray(AssetItem item, string exportPath)
+        {
+            var m_Texture2DArray = (Texture2DArray)item.Asset;
+            var count = 0;
+            foreach (var texture in m_Texture2DArray.TextureList)
+            {
+                var fakeItem = new AssetItem(texture)
+                {
+                    Text = texture.m_Name,
+                    Container = item.Container,
+                };
+                if (ExportTexture2D(fakeItem, exportPath))
+                {
+                    count++;
+                }
+            }
+            return count > 0;
+        }
         public static bool ExportAudioClip(AssetItem item, string exportPath)
         {
             var m_AudioClip = (AudioClip)item.Asset;
@@ -593,6 +611,10 @@ namespace AssetStudio.GUI
                     return ExportGameObject(item, exportPath);
                 case ClassIDType.Texture2D:
                     return ExportTexture2D(item, exportPath);
+                case ClassIDType.Texture2DArrayImage:
+                    return ExportTexture2D(item, exportPath);
+                case ClassIDType.Texture2DArray:
+                    return ExportTexture2DArray(item, exportPath);
                 case ClassIDType.AudioClip:
                     return ExportAudioClip(item, exportPath);
                 case ClassIDType.Shader:
